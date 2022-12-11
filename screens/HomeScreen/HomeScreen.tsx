@@ -1,7 +1,6 @@
 /* eslint-disable react/self-closing-comp */
 import React from 'react';
 import {
-  Button,
   View,
   Text,
   StatusBar,
@@ -9,34 +8,41 @@ import {
   FlatList,
   TouchableOpacity,
 } from 'react-native';
-import type {NativeStackScreenProps} from '@react-navigation/native-stack';
+
 import {useContext} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import {SearchBox} from '../../components/SearchBox';
 import TvShowContext from '../../shared/provider/TvShowProvider';
-import {ITvShow, IShow} from '../../types/TvShow';
+import {IShow} from '../../types/TvShow';
 
 export const HomeScreen = () => {
-  // const value = useContext<ITvShow[]>(TvShowContext);
   const value = useContext(TvShowContext);
 
   const navigation = useNavigation();
 
-  const renderItem = ({item}: {item: IShow}) => {
-    console.log('ITEM', item);
+  const renderItem = ({item}: {item: IShow}) => (
+    <TouchableOpacity
+      style={styles.item}
+      onPress={() => {
+        navigation.navigate('MovieDescriptionScreen', {item});
+      }}>
+      <Text style={styles.itemText}>{item.name}</Text>
+    </TouchableOpacity>
+  );
+
+  const ItemDivider = () => {
     return (
-      <TouchableOpacity
-        style={styles.item}
-        onPress={() => {
-          navigation.navigate('MovieDescriptionScreen', item);
-        }}>
-        <Text>{item.name}</Text>
-      </TouchableOpacity>
+      <View
+        style={{
+          height: 1,
+          width: '100%',
+          backgroundColor: '#607D8B',
+        }}
+      />
     );
   };
 
-  console.log('VALUES', Object.values(value));
-  let test = value.searchResult?.map(item => item.show);
+  let data = value.searchResult?.map(item => item.show);
 
   return (
     <View>
@@ -44,13 +50,12 @@ export const HomeScreen = () => {
         <SearchBox />
       </View>
       <View>
-        {/* <Text>{JSON.stringify(value, null, 2)}</Text> */}
         <View style={styles.container}>
           <FlatList
-            // data={value.map((item: ITvShow) => item.show)}
-            data={test}
+            data={data}
             renderItem={renderItem}
-            keyExtractor={item => String(item?.id)}
+            keyExtractor={item => item?.id.toString()}
+            ItemSeparatorComponent={ItemDivider}
           />
         </View>
       </View>
@@ -63,9 +68,13 @@ const styles = StyleSheet.create({
     marginTop: StatusBar.currentHeight || 0,
   },
   item: {
-    padding: 5,
-    marginVertical: 8,
-    marginHorizontal: 16,
+    paddingLeft: 15,
+    paddingTop: 8,
+    paddingBottom: 8,
+  },
+  itemText: {
+    fontSize: 24,
+    color: 'black',
   },
   title: {
     fontSize: 32,

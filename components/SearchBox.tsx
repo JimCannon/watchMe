@@ -13,28 +13,6 @@ import useDebounce from '../hooks/useDebounce';
 import TvShowContext from '../shared/provider/TvShowProvider';
 import {ITvShow} from '../types/TvShow';
 
-const navigation = useNavigation();
-
-/*function resultTvList({data}: {data: ITvShow[]}) {
-  return (
-    <View>
-      {data &&
-        data.map(item => {
-          return (
-            <View key={item.show.id}>
-              <Text
-                onPress={() => {
-                  navigation.navigate('MovieDescriptionScreen', {TvShow: item});
-                }}>
-                {item?.show?.name}
-              </Text>
-            </View>
-          );
-        })}
-    </View>
-  );
-}*/
-
 export const SearchBox = () => {
   const [search, setSearch] = useState('');
   const debouncedSearch = useDebounce(search, 500);
@@ -69,7 +47,6 @@ export const SearchBox = () => {
         keyboardType="default"
       />
       {isLoading && <ActivityIndicator />}
-      {/* {isSuccess && resultTvList({data})} */}
     </>
   );
 };
