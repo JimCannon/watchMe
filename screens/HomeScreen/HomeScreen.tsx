@@ -1,29 +1,73 @@
+/* eslint-disable react/self-closing-comp */
+import React from 'react';
+import {
+  Button,
+  View,
+  Text,
+  StatusBar,
+  StyleSheet,
+  FlatList,
+  TouchableOpacity,
+} from 'react-native';
+import type {NativeStackScreenProps} from '@react-navigation/native-stack';
+import {useContext} from 'react';
 import {useNavigation} from '@react-navigation/native';
-import React, {useContext} from 'react';
-import {Button, Text, View} from 'react-native';
-import {UserContext} from '../../shared/provider/UserProvider';
-import {StackNavigationProp} from '@react-navigation/stack';
-import {AppRootNavigationParams} from '../../navigation/AppRootNavigationParams';
-import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {StackParamList} from './StackParamList';
+import {SearchBox} from '../../components/SearchBox';
+import TvShowContext from '../../shared/provider/TvShowProvider';
+import {ITvShow, IShow} from '../../types/TvShow';
 
-export interface HomeScreenProps {}
+export const HomeScreen = () => {
+  // const value = useContext<ITvShow[]>(TvShowContext);
+  const value = useContext(TvShowContext);
 
-export const HomeScreen = ({
-  route,
-  navigation,
-}: NativeStackScreenProps<StackParamList, 'MovieDescription'>) => {
   const navigation = useNavigation();
-  const data = useContext(UserContext);
-  // return <div>HomeScreen</div>;
+
+  const renderItem = ({item}: {item: IShow}) => {
+    console.log('ITEM', item);
+    return (
+      <TouchableOpacity
+        style={styles.item}
+        onPress={() => {
+          navigation.navigate('MovieDescriptionScreen', item);
+        }}>
+        <Text>{item.name}</Text>
+      </TouchableOpacity>
+    );
+  };
+
+  console.log('VALUES', Object.values(value));
+  let test = value.searchResult?.map(item => item.show);
+
   return (
-    <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-      <Text>Home</Text>
-      {data}
-      <Button
-        title="Go to MovieDescription"
-        onPress={() => navigation.navigate('MovieDescription')}
-      />
+    <View>
+      <View>
+        <SearchBox />
+      </View>
+      <View>
+        {/* <Text>{JSON.stringify(value, null, 2)}</Text> */}
+        <View style={styles.container}>
+          <FlatList
+            // data={value.map((item: ITvShow) => item.show)}
+            data={test}
+            renderItem={renderItem}
+            keyExtractor={item => String(item?.id)}
+          />
+        </View>
+      </View>
     </View>
   );
 };
+const styles = StyleSheet.create({
+  container: {
+    display: 'flex',
+    marginTop: StatusBar.currentHeight || 0,
+  },
+  item: {
+    padding: 5,
+    marginVertical: 8,
+    marginHorizontal: 16,
+  },
+  title: {
+    fontSize: 32,
+  },
+});

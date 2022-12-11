@@ -7,27 +7,54 @@
  *
  * @format
  */
-
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+  QueryClient,
+  QueryClientProvider,
+} from '@tanstack/react-query';
 import React from 'react';
-// import {ScrollView, View, Text} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
-import {createNativeStackNavigator} from '@react-navigation/stack';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {HomeScreen} from './screens/HomeScreen/HomeScreen';
+import {MovieDescriptionScreen} from './screens/MovieDescriptionScreen/MovieDescriptionScreen';
+// import type {NativeStackScreenProps} from '@react-navigation/native-stack';
+import {TvShowContextProvider} from './shared/provider/TvShowProvider';
 
-export type StackParamList = {
-  HomeScreen: undefined;
-  MovieDescriptionScreen: {id: number};
+type RootStackParamList = {
+  Home: undefined;
+  MovieDescriptionScreen: {userId: string};
 };
 
-const RootStack = createNativeStackNavigator<StackParamList>();
+// type Props = NativeStackScreenProps<
+//   RootStackParamList,
+//   'MovieDescriptionScreen',
+//   'MyStack'
+// >;
+
+const queryClient = new QueryClient();
+const Stack = createNativeStackNavigator<RootStackParamList>();
 
 const App = () => {
   return (
-    <NavigationContainer>
-      <RootStack.Navigator initialRouteName="HomeScreen">
-        <RootStack.Screen name="HomeScreen" component={HomeScreen} />
-      </RootStack.Navigator>
-    </NavigationContainer>
+    <QueryClientProvider client={queryClient}>
+      <TvShowContextProvider>
+        <NavigationContainer>
+          <Stack.Navigator>
+            <Stack.Screen
+              name="HomeScreen"
+              component={HomeScreen}
+              options={{title: 'Home'}}
+            />
+            <Stack.Screen
+              name="MovieDescriptionScreen"
+              component={MovieDescriptionScreen}
+            />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </TvShowContextProvider>
+    </QueryClientProvider>
   );
 };
 
