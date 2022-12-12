@@ -49,7 +49,7 @@ export const MovieDescriptionScreen = ({route}: any) => {
 
 const styles = StyleSheet.create({
   image: {
-    height: '100%',
+    height: 300,
   },
   details: {
     justifyContent: 'center',
